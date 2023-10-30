@@ -1,7 +1,7 @@
 package main
 
 import (
-	"math"
+
 	"gonum.org/v1/gonum/stat/distuv"
 )
 
@@ -32,3 +32,25 @@ func SimulatePopulationTimePoints(initialPop *Population, numGen int) []*Populat
 
 //SimulateOneGeneration takes in a population object
 //It returns another population object with the frequency of the allele updated by the WF Equation
+func SimulateOneGeneration(currentPop *Population) *Population {
+	newPop := CopyGeneration(currentPop)
+	prob := currentPop.freq * currentPop.selCo
+	var b distuv.Binomial
+	b.N = float64(newPop.popSize)
+	b.P = prob
+	newPop.freq = distuv.Binomial.Rand(b)
+
+	return newPop
+}
+
+//CopyGeneration takes in one Population.
+//It returns another population with the same parameters but one greater gen
+func CopyGeneration(currentPop *Population) *Population {
+	var newPop Population
+	newPop.popSize = currentPop.popSize
+	newPop.gen = currentPop.gen + 1
+	newPop.selCo = currentPop.selCo
+	newPop.freqStart = currentPop.freqStart
+	newPop.freq = currentPop.freq 
+	return &newPop
+}
