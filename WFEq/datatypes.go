@@ -5,5 +5,6 @@ type Population struct {
 	gen int
 	selCo float64
 	freqStart float64
+	freqNum float64
 	freq float64
 }

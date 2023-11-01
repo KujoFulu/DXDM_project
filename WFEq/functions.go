@@ -12,6 +12,7 @@ func InitializePopulation(popSize int, selCo, freqStart float64) *Population {
 	initialPop.popSize = popSize
 	initialPop.selCo = selCo
 	initialPop.freqStart = freqStart
+	initialPop.freqNum = freqStart*float64(popSize)
 	initialPop.freq = freqStart
 	initialPop.gen = 0
 	
@@ -34,11 +35,12 @@ func SimulatePopulationTimePoints(initialPop *Population, numGen int) []*Populat
 //It returns another population object with the frequency of the allele updated by the WF Equation
 func SimulateOneGeneration(currentPop *Population) *Population {
 	newPop := CopyGeneration(currentPop)
-	prob := currentPop.freq * currentPop.selCo
+	prob := (currentPop.freqNum * (1+currentPop.selCo))/(currentPop.freqNum * (1+currentPop.selCo) + float64(currentPop.popSize) - currentPop.freqNum)
 	var b distuv.Binomial
 	b.N = float64(newPop.popSize)
 	b.P = prob
-	newPop.freq = distuv.Binomial.Rand(b)
+	newPop.freqNum = distuv.Binomial.Rand(b)
+	newPop.freq = newPop.freqNum/(float64(newPop.popSize))
 
 	return newPop
 }
@@ -51,6 +53,13 @@ func CopyGeneration(currentPop *Population) *Population {
 	newPop.gen = currentPop.gen + 1
 	newPop.selCo = currentPop.selCo
 	newPop.freqStart = currentPop.freqStart
+	newPop.freqNum = currentPop.freqNum
 	newPop.freq = currentPop.freq 
 	return &newPop
 }
+
+//SimulateMultipleRuns is a function that takes in an int and the different parameters
+//It returns a slice of population generation slices
+//func SimulateMultipleRuns(numRuns, popSize int, selCo, freqStart float64) *[][]Population {
+
+//}
