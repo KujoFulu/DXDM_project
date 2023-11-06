@@ -46,7 +46,7 @@ func Copy(ecosystem *Ecosystem) *Ecosystem {
 	newEcosystem := &Ecosystem{}
 
 	// copy the species slice
-	newEcosystem.species = ecosystem.species
+	newEcosystem.species = CopySpecies(ecosystem.species)
 
 	// copy the interaction matrix
 	newEcosystem.interaction = ecosystem.interaction
@@ -55,6 +55,20 @@ func Copy(ecosystem *Ecosystem) *Ecosystem {
 	newEcosystem.deathGrowth = ecosystem.deathGrowth
 
 	return newEcosystem
+}
+
+// CopySpecies takes a slice of Specie pointers, and returns a new slice of Specie pointers with the same attributes
+func CopySpecies(species []*Specie) []*Specie {
+	// initialize a new slice of Specie pointers
+	newSpecies := make([]*Specie, len(species))
+
+	// range over the species slice, and copy each specie
+	for i, specie := range newSpecies {
+		specie.index = species[i].index
+		specie.population = species[i].population
+	}
+
+	return newSpecies
 }
 
 // UpdatePopulation(specie, time) takes a pointer of object Species, and a float64 object time
