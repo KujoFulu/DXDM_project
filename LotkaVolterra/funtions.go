@@ -40,11 +40,28 @@ func UpdateEcosystem(currEcosystem *Ecosystem, time float64) *Ecosystem {
 	return newEcosystem
 }
 
+// Copy takes a pointer of Ecosystem object, and returns a new Ecosystem object with the same attributes.
+func Copy(ecosystem *Ecosystem) *Ecosystem {
+	// initialize a new Ecosystem object
+	newEcosystem := &Ecosystem{}
+
+	// copy the species slice
+	newEcosystem.species = ecosystem.species
+
+	// copy the interaction matrix
+	newEcosystem.interaction = ecosystem.interaction
+
+	// copy the deathGrowth matrix
+	newEcosystem.deathGrowth = ecosystem.deathGrowth
+
+	return newEcosystem
+}
+
 // UpdatePopulation(specie, time) takes a pointer of object Species, and a float64 object time
 // It returns a float64 object which is the updated population of this specie.
 func UpdatePopulation(ecosystem *Ecosystem, time float64) mat.Matrix {
 	// initialize a new population variable
-	var newP float64
+	var newP mat.Matrix
 
 	// calculate F = ∆t · G + 1, return a Matrix
 	f := CalculateF(ecosystem.deathGrowth, time)
@@ -55,7 +72,7 @@ func UpdatePopulation(ecosystem *Ecosystem, time float64) mat.Matrix {
 	p := InitializePop(ecosystem.species)
 
 	// calculate updated population
-	// newPop = (h*ecosystem.allPopulation + f) * ecosystem.allPopulation
+	// newPop = (h*p + f) * p
 	newP = CalculatePop(f, h, p)
 
 	return newP
@@ -91,4 +108,22 @@ func CalculateH(interaction mat.Matrix, deltaTime float64) mat.Matrix {
 	H.Scale(deltaTime, H)
 
 	return H
+}
+
+// CalculatePop calculates the updated population based on the given matrices.
+// newPop = (h * p + f) * p
+func CalculatePop(f, h, p mat.Matrix) mat.Matrix {
+	// hp will store the result of h * p
+	r, c := p.Dims()
+	hp := mat.NewDense(r, c, nil)
+	hp.Mul(h, p)
+
+	// Add f to the result of h * p
+	hp.Add(hp, f)
+
+	// newP will store the final result of (h * p + f) * p
+	newP := mat.NewDense(r, c, nil)
+	newP.Mul(hp, p)
+
+	return newP
 }

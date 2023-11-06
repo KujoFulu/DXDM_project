@@ -36,5 +36,21 @@ func InitializeEcosystem(numSpecies int, interaction mat.Matrix, deathGrowth mat
 	return ecosystem
 }
 
+func InitializePop(species []*Specie) mat.Matrix {
+	// get the length of the species slice
+	numSpecies := len(species)
+
+	// range through the species slice, and extract them all into a slice
+	pop := make([]float64, numSpecies)
+	for _, specie := range species {
+		pop[specie.index] = specie.population
+	}
+
+	// convert the slice into a matrix
+	popMatrix := mat.NewDense(numSpecies, 1, pop)
+
+	return popMatrix
+}
+
 // ecosystem.interaction = IniInterMatrix()
 // ecosystem.deathGrowth = IniRateMatrix()
