@@ -1,6 +1,9 @@
 package main
 
 import (
+	"math/rand"
+	"time"
+
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -15,7 +18,7 @@ func InitializeEcosystem(numSpecies int, interaction mat.Matrix, deathGrowth mat
 
 	// assign attributes values
 	ecosystem.interaction = InitializeInteractionMatrix(species)
-	ecosystem.deathGrowth = deathGrowth
+	ecosystem.deathGrowth = IniRateMatrix(species)
 	ecosystem.species = species
 
 	// set the index for each specie, starting from 0
@@ -52,5 +55,65 @@ func InitializePop(species []*Specie) mat.Matrix {
 	return popMatrix
 }
 
-// ecosystem.interaction = IniInterMatrix()
-// ecosystem.deathGrowth = IniRateMatrix()
+// ecosystem.deathGrowth = IniRateMatrix(deathGrowth)
+// IniInterMatrix() takes a slice of float64 objects, and returns a mat.Matrix object.
+func IniRateMatrix(species []*Specie) mat.Matrix {
+	// get the number of species
+	n := len(species)
+
+	// randomly generate a slice of float64 numbers
+	deathGrowth := generateDeathGrowthSlice(n)
+
+	// convert the slice into a n*1 death and growth matrix
+	rateMatrix := mat.NewDense(n, 1, deathGrowth)
+
+	return rateMatrix
+}
+
+// generateDeathGrowthSlice generates a slice of float64 numbers with the first number in the range (0, 1)
+// and the others in the range (-1, 0)
+func generateDeathGrowthSlice(n int) []float64 {
+	deathGrowth := make([]float64, n)
+	// Seed the random number generator
+	rand.Seed(time.Now().UnixNano())
+
+	// Set the first element to a random number in (0, 1)
+	deathGrowth[0] = rand.Float64()
+
+	// Set the remaining elements to random numbers in (-1, 0)
+	for i := 1; i < n; i++ {
+		deathGrowth[i] = rand.Float64() - 1.0 // This generates a number in [0, 1) and then subtracts 1 to shift to [-1, 0)
+	}
+
+	return deathGrowth
+}
+
+// InitializeInteractionMatrix() takes a species slice, and returns an interaction matrix.
+// The interaction matrix is a square matrix with the size of the number of species.
+// The diagonal elements are all 0, and the off-diagonal elements are randomly generated.
+// The off-diagonal elements are the interaction coefficients between species.
+// The interaction coefficients are randomly generated between -1 and 1.
+func InitializeInteractionMatrix(species []*Specie) mat.Matrix {
+	// get the length of the species slice
+	numSpecies := len(species)
+
+	// initialize a slice to store the interaction coefficients
+	interaction := make([]float64, numSpecies*numSpecies)
+
+	// range through the species slice, and assign random interaction coefficients to each specie. Make sure species[i][j] should be the same as species[j][i].
+	for i := 0; i < numSpecies; i++ {
+		for j := 0; j < numSpecies; j++ {
+			if i == j {
+				interaction[i*numSpecies+j] = 0
+			} else {
+				interaction[i*numSpecies+j] = rand.Float64()*2 - 1
+				interaction[j*numSpecies+i] = interaction[i*numSpecies+j]
+			}
+		}
+	}
+
+	// convert the slice into a matrix
+	interactionMatrix := mat.NewDense(numSpecies, numSpecies, interaction)
+
+	return interactionMatrix
+}
