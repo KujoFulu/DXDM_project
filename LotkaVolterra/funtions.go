@@ -1,6 +1,10 @@
 package main
 
-import "gonum.org/v1/gonum/mat"
+import (
+	"math"
+
+	"gonum.org/v1/gonum/mat"
+)
 
 // SimulateEcosystem() takes as input the initial *Ecosystem object set by the user, a number of generations that the simulation will run,
 // and a time interval at which the ecosystem will be updated.
@@ -129,21 +133,18 @@ func UpdatePopulation(ecosystem *Ecosystem, time float64) mat.Matrix {
 	return newP
 }
 
-// CalculateF calculates the matrix F based on the deathGrowth matrix and time scalar.
-// It performs the operation F = ∆t * G + I, where I is an identity matrix of the same size as G.
-func CalculateF(deathGrowth mat.Matrix, deltaTime float64) mat.Matrix {
+// // CalculateF calculates the matrix F based on the deathGrowth matrix and time scalar.
+// // It performs the operation F = ∆t * G + I, where I is an identity matrix of the same size as G.
+func CalculateF(G mat.Matrix, deltaTime float64) mat.Matrix {
 	// Get the dimensions of the deathGrowth matrix
-	r, c := deathGrowth.Dims()
+	r, _ := G.Dims()
 
 	// Create a new dense matrix to hold the result
-	F := mat.NewDense(r, c, nil)
-
-	// Scale deathGrowth by deltaTime and assign to F
-	F.Scale(deltaTime, deathGrowth)
+	F := mat.NewDense(r, 1, nil)
 
 	// Add the identity matrix to F
 	for i := 0; i < r; i++ {
-		F.Set(i, i, F.At(i, i)+1)
+		F.Set(i, 0, G.At(i, 0)*deltaTime+1)
 	}
 
 	return F
@@ -151,9 +152,9 @@ func CalculateF(deathGrowth mat.Matrix, deltaTime float64) mat.Matrix {
 
 // CalculateH calculates the matrix H based on the interaction matrix and time scalar.
 // It performs the operation H = ∆t * D, where D is the interaction matrix.
-func CalculateH(interaction mat.Matrix, deltaTime float64) mat.Matrix {
+func CalculateH(D mat.Matrix, deltaTime float64) mat.Matrix {
 	// Clone the interaction matrix to avoid altering the original data
-	H := mat.DenseCopyOf(interaction)
+	H := mat.DenseCopyOf(D)
 
 	// Scale the interaction matrix by deltaTime to get H
 	H.Scale(deltaTime, H)
@@ -162,19 +163,28 @@ func CalculateH(interaction mat.Matrix, deltaTime float64) mat.Matrix {
 }
 
 // CalculatePop calculates the updated population based on the given matrices.
-// newPop = (h * p + f) * p
+// newPop = (h x p + f) * p
 func CalculatePop(f, h, p mat.Matrix) mat.Matrix {
-	// hp will store the result of h * p
+	// get the dimensions of the population matrix
 	r, c := p.Dims()
+
+	// initialize a new mat.matrix hp to store the result of h * p
 	hp := mat.NewDense(r, c, nil)
 	hp.Mul(h, p)
 
-	// Add f to the result of h * p
+	// add f to the result of h * p
 	hp.Add(hp, f)
 
-	// newP will store the final result of (h * p + f) * p
+	// element-wise multiplication
 	newP := mat.NewDense(r, c, nil)
-	newP.Mul(hp, p)
+	newP.MulElem(hp, p)
+
+	// apply max function to ensure no population goes below 0
+	for i := 0; i < r; i++ {
+		for j := 0; j < c; j++ {
+			newP.Set(i, j, math.Max(0, newP.At(i, j)))
+		}
+	}
 
 	return newP
 }

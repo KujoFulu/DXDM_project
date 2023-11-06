@@ -22,6 +22,6 @@ func main() {
 	timePoints := SimulateEcosystem(initialEcosystem, numGens, time)
 
 	// print out the population of each species in the last ecosystem
-	fmt.Println("The population of each species in the last ecosystem is:", timePoints[numGens].species)
+	fmt.Println("The population of the first specie in the last ecosystem is:", timePoints[numGens].species[0].population)
 
 }
