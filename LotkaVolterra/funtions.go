@@ -18,7 +18,7 @@ func SimulateEcosystem(initialEcosystem *Ecosystem, numGens int, time float64) [
 	timePoints[0] = initialEcosystem
 
 	// range over the number of ecosystems and set the i-th ecosystem equal to updating the (i-1)th ecosystem
-	for i := 1; i < numGens; i++ {
+	for i := 1; i < numGens+1; i++ {
 		timePoints[i] = UpdateEcosystem(timePoints[i-1], time)
 	}
 
