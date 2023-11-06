@@ -24,6 +24,11 @@ func SimulateEcosystem(initialEcosystem *Ecosystem, numGens int, time float64) [
 // UpdateEcosystem() takes a pointer of Ecosystem object, a float64 object time,
 // It returns a new Ecosystem object with updated population of each species.
 func UpdateEcosystem(currEcosystem *Ecosystem, time float64) *Ecosystem {
+	if currEcosystem == nil {
+		// Handle the nil case appropriately, possibly returning nil or an error
+		return nil //if that behavior is desired
+	}
+
 	// initialize a new Ecosystem object
 	newEcosystem := Copy(currEcosystem)
 
@@ -49,26 +54,58 @@ func Copy(ecosystem *Ecosystem) *Ecosystem {
 	newEcosystem.species = CopySpecies(ecosystem.species)
 
 	// copy the interaction matrix
-	newEcosystem.interaction = ecosystem.interaction
+	newEcosystem.interaction = DeepCopyMatrix(ecosystem.interaction) // ecosystem.interaction
 
 	// copy the deathGrowth matrix
-	newEcosystem.deathGrowth = ecosystem.deathGrowth
+	newEcosystem.deathGrowth = DeepCopyMatrix(ecosystem.deathGrowth) // ecosystem.deathGrowth
 
 	return newEcosystem
 }
 
+func DeepCopyMatrix(m mat.Matrix) mat.Matrix {
+	// Type assert to check if it's a *mat.Dense
+	if md, ok := m.(*mat.Dense); ok {
+		// Use the RawMatrix method to get the underlying data slice
+		data := md.RawMatrix()
+
+		// Make a new slice with the same data
+		copiedData := make([]float64, len(data.Data))
+		copy(copiedData, data.Data)
+
+		// Create a new Dense matrix with the copied data
+		return mat.NewDense(data.Rows, data.Cols, copiedData)
+	}
+
+	panic("Unsupported matrix type!")
+}
+
 // CopySpecies takes a slice of Specie pointers, and returns a new slice of Specie pointers with the same attributes
 func CopySpecies(species []*Specie) []*Specie {
-	// initialize a new slice of Specie pointers
+	// // Method 1 - some nil pointers problems
+	// // initialize a new slice of Specie pointers
+	// newSpecies := make([]*Specie, len(species))
+
+	// // range over the species slice, and copy each specie
+	// for i, specie := range newSpecies {
+	// 	specie.index = species[i].index
+	// 	specie.population = species[i].population
+	// }
+
+	// Method 2 - chatGPT corrected
+	// Initialize a new slice of Specie pointers with the same length as the input
 	newSpecies := make([]*Specie, len(species))
 
-	// range over the species slice, and copy each specie
-	for i, specie := range newSpecies {
-		specie.index = species[i].index
-		specie.population = species[i].population
+	// Range over the original species slice, and copy each Specie
+	for i, specie := range species {
+		// Make sure to initialize a new Specie to avoid nil pointer dereference
+		newSpecies[i] = &Specie{
+			index:      specie.index,
+			population: specie.population,
+		}
 	}
 
 	return newSpecies
+
 }
 
 // UpdatePopulation(specie, time) takes a pointer of object Species, and a float64 object time
