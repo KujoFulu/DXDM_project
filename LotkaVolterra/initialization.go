@@ -1,6 +1,8 @@
 package main
 
 import (
+	"math/rand"
+
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -14,7 +16,7 @@ func InitializeEcosystem(numSpecies int, interaction mat.Matrix, deathGrowth mat
 	species := make([]*Specie, numSpecies)
 
 	// assign attributes values
-	ecosystem.interaction = interaction
+	ecosystem.interaction = InitializeInteractionMatrix(species)
 	ecosystem.deathGrowth = deathGrowth
 	ecosystem.species = species
 
@@ -52,5 +54,32 @@ func InitializePop(species []*Specie) mat.Matrix {
 	return popMatrix
 }
 
-// ecosystem.interaction = IniInterMatrix()
-// ecosystem.deathGrowth = IniRateMatrix()
+// InitializeInteractionMatrix() takes a species slice, and returns an interaction matrix.
+// The interaction matrix is a square matrix with the size of the number of species.
+// The diagonal elements are all 0, and the off-diagonal elements are randomly generated.
+// The off-diagonal elements are the interaction coefficients between species.
+// The interaction coefficients are randomly generated between -1 and 1.
+func InitializeInteractionMatrix(species []*Specie) mat.Matrix {
+	// get the length of the species slice
+	numSpecies := len(species)
+
+	// initialize a slice to store the interaction coefficients
+	interaction := make([]float64, numSpecies*numSpecies)
+
+	// range through the species slice, and assign random interaction coefficients to each specie. Make sure species[i][j] should be the same as species[j][i].
+	for i := 0; i < numSpecies; i++ {
+		for j := 0; j < numSpecies; j++ {
+			if i == j {
+				interaction[i*numSpecies+j] = 0
+			} else {
+				interaction[i*numSpecies+j] = rand.Float64()*2 - 1
+				interaction[j*numSpecies+i] = interaction[i*numSpecies+j]
+			}
+		}
+	}
+
+	// convert the slice into a matrix
+	interactionMatrix := mat.NewDense(numSpecies, numSpecies, interaction)
+
+	return interactionMatrix
+}
