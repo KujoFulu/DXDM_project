@@ -37,12 +37,27 @@ func InitializeEcosystem(numSpecies int, interaction mat.Matrix, deathGrowth mat
 		species:     make([]*Specie, numSpecies), // Allocate space for numSpecies pointers to Specie
 	}
 
-	// Initialize each specie in the species slice, setting the index and population
-	for i := range ecosystem.species {
-		ecosystem.species[i] = &Specie{
-			population: 100, // Default population, you might want to differentiate for the first species (grass)
-			index:      i,
-		}
+	// // Need modification, since predetor and prey will have different population size at first
+	// // Initialize each specie in the species slice, setting the index and population
+	// for i := range ecosystem.species {
+	// 	ecosystem.species[i] = &Specie{
+	// 		population: 100, // Default population, you might want to differentiate for the first species (grass)
+	// 		index:      i,
+	// 	}
+	// }
+
+	// an example test for 3 species
+	ecosystem.species[0] = &Specie{
+		population: 50,
+		index:      0,
+	}
+	ecosystem.species[1] = &Specie{
+		population: 10,
+		index:      1,
+	}
+	ecosystem.species[2] = &Specie{
+		population: 5,
+		index:      2,
 	}
 
 	return ecosystem
@@ -75,6 +90,17 @@ func IniRateMatrix(numSpecies int) mat.Matrix {
 
 	// convert the slice into a n*1 death and growth matrix
 	rateMatrix := mat.NewDense(n, 1, deathGrowth)
+
+	return rateMatrix
+}
+
+// SetRateMatrix(rateSlice) is a different version of generating deathGrowth matrix, with a slice of float64 numbers we set.
+func SetRateMatrix(rateSlice []float64) mat.Matrix {
+	// get the number of species
+	n := len(rateSlice)
+
+	// convert the slice into a n*1 death and growth matrix
+	rateMatrix := mat.NewDense(n, 1, rateSlice)
 
 	return rateMatrix
 }
@@ -122,4 +148,12 @@ func InitializeInteractionMatrix(numSpecies int) mat.Matrix {
 	interactionMatrix := mat.NewDense(numSpecies, numSpecies, interaction)
 
 	return interactionMatrix
+}
+
+// SetInteractionMatrix(interactionSlice is a different version of generating interaction matrix, with a slice of float64 numbers we set.
+func SetInteractionMatrix(interactionSlice []float64, numSpecies int) mat.Matrix {
+	// convert the slice into a n*1 death and growth matrix
+	rateMatrix := mat.NewDense(numSpecies, numSpecies, interactionSlice)
+
+	return rateMatrix
 }
