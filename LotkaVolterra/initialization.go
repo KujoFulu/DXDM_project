@@ -36,5 +36,5 @@ func InitializeEcosystem(numSpecies int, interaction mat.Matrix, deathGrowth mat
 	return ecosystem
 }
 
-// ecosystem.interaction = IniInterMatrix(interaction)
-// ecosystem.deathGrowth = IniRateMatrix(deathGrowth)
+// ecosystem.interaction = IniInterMatrix()
+// ecosystem.deathGrowth = IniRateMatrix()
