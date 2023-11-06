@@ -1,9 +1,6 @@
 package main
 
 import (
-	"math/rand"
-	"time"
-
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -17,7 +14,7 @@ func InitializeEcosystem(numSpecies int, interaction mat.Matrix, deathGrowth mat
 	species := make([]*Specie, numSpecies)
 
 	// assign attributes values
-	ecosystem.interaction = interaction
+	ecosystem.interaction = InitializeInteractionMatrix(species)
 	ecosystem.deathGrowth = deathGrowth
 	ecosystem.species = species
 
@@ -55,36 +52,5 @@ func InitializePop(species []*Specie) mat.Matrix {
 	return popMatrix
 }
 
-// ecosystem.deathGrowth = IniRateMatrix(deathGrowth)
-// IniInterMatrix() takes a slice of float64 objects, and returns a mat.Matrix object.
-func IniRateMatrix(species []*Specie) mat.Matrix {
-	// get the number of species
-	n := len(species)
-
-	// randomly generate a slice of float64 numbers
-	deathGrowth := generateDeathGrowthSlice(n)
-
-	// convert the slice into a n*1 death and growth matrix
-	rateMatrix := mat.NewDense(n, 1, deathGrowth)
-
-	return rateMatrix
-}
-
-// generateDeathGrowthSlice generates a slice of float64 numbers with the first number in the range (0, 1)
-// and the others in the range (-1, 0)
-func generateDeathGrowthSlice(n int) []float64 {
-	deathGrowth := make([]float64, n)
-
-	// Seed the random number generator
-	rand.Seed(time.Now().UnixNano())
-
-	// Set the first element to a random number in (0, 1)
-	deathGrowth[0] = rand.Float64()
-
-	// Set the remaining elements to random numbers in (-1, 0)
-	for i := 1; i < n; i++ {
-		deathGrowth[i] = rand.Float64() - 1.0 // This generates a number in [0, 1) and then subtracts 1 to shift to [-1, 0)
-	}
-
-	return deathGrowth
-}
+// ecosystem.interaction = IniInterMatrix()
+// ecosystem.deathGrowth = IniRateMatrix()
