@@ -32,7 +32,9 @@ func UpdateEcosystem(currEcosystem *Ecosystem, time float64) *Ecosystem {
 
 	// range over the species slice in the new Ecosystem object, and assign updated population to each specie
 	for _, specie := range newEcosystem.species {
-		specie.population = newPop[specie.index] // indexing problem with mat.Vector datatype
+		// extract out the value of the updated population matrix at the index of the specie
+		// row: specie.index; column: 0
+		specie.population = newPop.At(specie.index, 0)
 	}
 
 	return newEcosystem
@@ -40,7 +42,7 @@ func UpdateEcosystem(currEcosystem *Ecosystem, time float64) *Ecosystem {
 
 // UpdatePopulation(specie, time) takes a pointer of object Species, and a float64 object time
 // It returns a float64 object which is the updated population of this specie.
-func UpdatePopulation(ecosystem *Ecosystem, time float64) mat.Vector {
+func UpdatePopulation(ecosystem *Ecosystem, time float64) mat.Matrix {
 	// initialize a new population variable
 	var newP float64
 
@@ -57,4 +59,36 @@ func UpdatePopulation(ecosystem *Ecosystem, time float64) mat.Vector {
 	newP = CalculatePop(f, h, p)
 
 	return newP
+}
+
+// CalculateF calculates the matrix F based on the deathGrowth matrix and time scalar.
+// It performs the operation F = ∆t * G + I, where I is an identity matrix of the same size as G.
+func CalculateF(deathGrowth mat.Matrix, deltaTime float64) mat.Matrix {
+	// Get the dimensions of the deathGrowth matrix
+	r, c := deathGrowth.Dims()
+
+	// Create a new dense matrix to hold the result
+	F := mat.NewDense(r, c, nil)
+
+	// Scale deathGrowth by deltaTime and assign to F
+	F.Scale(deltaTime, deathGrowth)
+
+	// Add the identity matrix to F
+	for i := 0; i < r; i++ {
+		F.Set(i, i, F.At(i, i)+1)
+	}
+
+	return F
+}
+
+// CalculateH calculates the matrix H based on the interaction matrix and time scalar.
+// It performs the operation H = ∆t * D, where D is the interaction matrix.
+func CalculateH(interaction mat.Matrix, deltaTime float64) mat.Matrix {
+	// Clone the interaction matrix to avoid altering the original data
+	H := mat.DenseCopyOf(interaction)
+
+	// Scale the interaction matrix by deltaTime to get H
+	H.Scale(deltaTime, H)
+
+	return H
 }

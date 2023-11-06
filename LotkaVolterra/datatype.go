@@ -7,7 +7,7 @@ import (
 type Ecosystem struct {
 	species     []*Specie
 	interaction mat.Matrix
-	deathGrowth mat.Vector
+	deathGrowth mat.Matrix
 }
 
 type Specie struct {
