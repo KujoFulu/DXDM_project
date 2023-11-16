@@ -42,4 +42,9 @@ func main() {
 	// print out the population of each species in the last ecosystem
 	fmt.Println("The population of the first specie in the last ecosystem is:", timePoints[numGens].species[0].population)
 
+	// writing data to csv file
+	fmt.Println("Writing data to csv file...")
+	WriteToCSV(timePoints, "output/data.csv")
+	fmt.Println("Data written to csv file!")
+
 }

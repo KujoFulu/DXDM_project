@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/csv"
+	"fmt"
 	"math"
+	"os"
+	"strconv"
 
 	"gonum.org/v1/gonum/mat"
 )
@@ -187,4 +191,42 @@ func CalculatePop(f, h, p mat.Matrix) mat.Matrix {
 	}
 
 	return newP
+}
+
+// WriteToCSV writes the population of each species for each numGen in the ecosystem to a CSV file
+func WriteToCSV(ecosystems []*Ecosystem, filename string) {
+	// Create a new csv file
+	file, err := os.Create(filename)
+	if err != nil {
+		fmt.Println("Error creating file:", err)
+		return
+	}
+	defer file.Close()
+
+	// Create a CSV writer
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	// Write the header row
+	header := []string{"Generation"}
+	for _, specie := range ecosystems[0].species {
+		header = append(header, "Species "+strconv.Itoa(specie.index))
+	}
+
+	if err := writer.Write(header); err != nil {
+		fmt.Println("Error writing header:", err)
+		return
+	}
+
+	// Write the population data for each ecosystem
+	for i, ecosystem := range ecosystems {
+		row := []string{strconv.Itoa(i)}
+		for _, specie := range ecosystem.species {
+			row = append(row, strconv.FormatFloat(specie.population, 'f', -1, 64))
+		}
+		if err := writer.Write(row); err != nil {
+			fmt.Println("Error writing row:", err)
+			return
+		}
+	}
 }
