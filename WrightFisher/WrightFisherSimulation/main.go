@@ -16,9 +16,10 @@ type Population struct {
 }
 
 func main() {
+
 	// Set parameters for simulation
 	popSize := 32    // Set population size
-	selCo := 0.0     // Set select coefficient
+	selCo := 0.01    // Set select coefficient
 	freqStart := 0.5 // Set the start allele frequency
 	numGen := 19     // Set the number of generations
 	numRuns := 107   // Set the number of simulation runs
@@ -31,11 +32,11 @@ func main() {
 	fmt.Println("All parameters loaded!")
 
 	// Specify the folder name(for R plotting)
-	folderName := "WrightFisher"
+	//folderName := "WrightFisher"
 	filename := "SimulationParameters.csv"
 
 	// Write parameters to csv file
-	WriteParameters(popSize, selCo, freqStart, numGen, numRuns, folderName, filename)
+	WriteParameters(popSize, selCo, freqStart, numGen, numRuns, filename)
 	fmt.Println("SimulationParameters.csv file created")
 
 	// Run simulations using SimulateMultipleRuns

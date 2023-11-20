@@ -81,7 +81,7 @@ func SimulateMultipleRuns(numRuns, popSize, numGen int, selCo, freqStart float64
 // Output a csv file
 func WriteToCSV(timePoints []*Population, filename string) {
 	// Specify the folder name
-	folderName := "WrightFisher"
+	//folderName := "WrightFisher"
 
 	// Get the current working directory
 	currentDir, err := os.Getwd()
@@ -91,7 +91,7 @@ func WriteToCSV(timePoints []*Population, filename string) {
 	}
 
 	// Construct the full path to the folder
-	folderPath := filepath.Join(currentDir, folderName)
+	folderPath := currentDir
 
 	// Check if the folder exists, create it if not
 	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
@@ -138,7 +138,7 @@ func WriteToCSV(timePoints []*Population, filename string) {
 // Function to write parameters to CSV file
 // Input all parameters, the output folder name, and filename(path)
 // Output a csv file in the folder
-func WriteParameters(popSize int, selCo, freqStart float64, numGen, numRuns int, folderName, filename string) {
+func WriteParameters(popSize int, selCo, freqStart float64, numGen, numRuns int, filename string) {
 	// Get the current working directory
 	currentDir, err := os.Getwd()
 	if err != nil {
@@ -147,7 +147,7 @@ func WriteParameters(popSize int, selCo, freqStart float64, numGen, numRuns int,
 	}
 
 	// Construct the full path to the folder
-	folderPath := filepath.Join(currentDir, folderName)
+	folderPath := currentDir
 
 	// Check if the folder exists, create it if not
 	if _, err := os.Stat(folderPath); os.IsNotExist(err) {

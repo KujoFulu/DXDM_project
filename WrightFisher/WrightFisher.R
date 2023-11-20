@@ -27,6 +27,15 @@ library(ggpubr)
 library(dplyr)
 library(viridis)
 
+# Get the current working directory
+current_dir <- getwd()
+
+# Construct the absolute path to the Go program
+go_program_path <- file.path(current_dir, "WrightFisherSimulation")
+
+# Run the Go program from R
+system(paste("go run", shQuote(go_program_path)), intern = TRUE)
+
 
 # import data
 

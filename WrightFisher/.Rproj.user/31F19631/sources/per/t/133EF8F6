@@ -1,9 +1,9 @@
 {
     "id": "133EF8F6",
-    "path": "~/go/src/final_project/WrightFisher/WrightFisher.R",
+    "path": "~/go/src/WrightFisher/WrightFisher.R",
     "project_path": "WrightFisher.R",
     "type": "r_source",
-    "hash": "803619863",
+    "hash": "2091628850",
     "contents": "",
     "dirty": false,
     "created": 1700279410326.0,
@@ -13,15 +13,15 @@
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "24,16",
-        "scrollLine": "0"
+        "cursorPosition": "335,0",
+        "scrollLine": "309"
     },
     "folds": "",
-    "lastKnownWriteTime": 1700280498,
+    "lastKnownWriteTime": 1700517627,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1700280498057,
+    "last_content_update": 1700517627753,
     "read_only": false,
     "read_only_alternatives": []
 }
