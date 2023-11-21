@@ -20,13 +20,32 @@ if (!require(viridis, quietly = TRUE)) {
   install.packages("viridis")
 }
 
+# Check if plotly is installed, and install it if not
+if(!require(plotly,quietly = TRUE)){
+  install.packages("plotly")
+}
+
+# Check if tidyverse is installed, and install it if not
+if(!require(tidyverse,quietly = TRUE)){
+  install.packages("tidyverse")
+}
+
+# Check if htmlwidgets is installed, and install it if not
+if(!require(htmlwidgets,quietly = TRUE)){
+  install.packages("htmlwidgets")
+}
 
 # Load required libraries
 library(ggplot2)
 library(ggpubr)
 library(dplyr)
 library(viridis)
+library(plotly)
+library(tidyverse)
+library(htmlwidgets)
 
+
+# Run simulation with go
 # Get the current working directory
 current_dir <- getwd()
 
@@ -35,6 +54,16 @@ go_program_path <- file.path(current_dir, "WrightFisherSimulation")
 
 # Run the Go program from R
 system(paste("go run", shQuote(go_program_path)), intern = TRUE)
+
+# https://plotly.com/r/cumulative-animations/
+accumulate_by <- function(dat, var) {
+  var <- lazyeval::f_eval(var, dat)
+  lvls <- plotly:::getLevels(var)
+  dats <- lapply(seq_along(lvls), function(x) {
+    cbind(dat[var %in% lvls[seq(1, x)], ], frame = lvls[[x]])
+  })
+  dplyr::bind_rows(dats)
+}
 
 
 # import data
@@ -55,8 +84,6 @@ generation_numbers <-parameter$NumGenerations
 run_times <- parameter$NumberRuns
 
 
-
-
 # Create a subset with average values for all generations
 average_data <- data %>%
   group_by(Generations) %>%
@@ -67,8 +94,6 @@ average_data <- data %>%
     Average_Num_Alleles = mean(NumAlleles),
     Average_Allele_Frequency = mean(AlleleFrequency)
   )
-
-
 
 
 
@@ -90,7 +115,6 @@ lineplotA <- ggplot(average_data, aes(x = Generations, y = Average_Allele_Freque
 
 
 
-
 # make the Average Allele a Frequency Over Time Plot
 
 # Create a line plot
@@ -109,7 +133,6 @@ lineplota <- ggplot(average_data, aes(x = Generations, y = 1-Average_Allele_Freq
 
 
 
-
 # make average_allele_freq_plot
 
 # make the Average allele plot that combined allele A and a
@@ -124,45 +147,37 @@ ggsave(file = "Average Allele Frequency lineplot.png", plot = average_allele_fre
 
 
 
-
 # Set the data for gentype counts
 
 # Calculate the frequency of AA, Aa, and aa in the last generation
-last_generation <- max(data$Generations)
-last_generation_data <- subset(data, Generations == last_generation)
-last_generation_data$AA_Frequency <- (last_generation_data$AlleleFrequency)**2 * last_generation_data$PopulationSize
-last_generation_data$Aa_Frequency <- last_generation_data$AlleleFrequency * (1 - last_generation_data$AlleleFrequency) * last_generation_data$PopulationSize
-last_generation_data$aa_Frequency <- (1 - last_generation_data$AlleleFrequency)**2 * last_generation_data$PopulationSize
+last_generation <- max(average_data$Generations)
+last_generation_data <- subset(average_data, Generations == last_generation)
+last_generation_data$AA_Frequency <- (last_generation_data$Average_Allele_Frequency)**2 
+last_generation_data$Aa_Frequency <- 2*last_generation_data$Average_Allele_Frequency * (1 - last_generation_data$Average_Allele_Frequency) 
+last_generation_data$aa_Frequency <- (1 - last_generation_data$Average_Allele_Frequency)**2 
 
 # Create a data frame for the bar plot
 genotype_data <- data.frame(
   Genotype = c("AA", "Aa", "aa"),
-  Frequency = c(
-    sum(last_generation_data$AA_Frequency),
-    sum(last_generation_data$Aa_Frequency),
-    sum(last_generation_data$aa_Frequency)
-  )
+  Frequency = c(last_generation_data$AA_Frequency,last_generation_data$Aa_Frequency,last_generation_data$aa_Frequency)
 )
 
 
 
-
-
-# Plot Genotype counts
+# Plot Genotype frequenct
 # Create a bar plot
-genotype_count_plot <- ggplot(genotype_data, aes(x = Genotype, y = Frequency)) +
+genotype_frequency_plot <- ggplot(genotype_data, aes(x = Genotype, y = Frequency)) +
   geom_bar(stat = "identity", fill = "skyblue") +
-  ggtitle("Individual Genotype Count Plot")+
+  ggtitle("Individual Genotype Frequency Plot of AA, Aa, and aa")+
   labs(x = "Genotype of Individuals",
-       y = "Number of Individuals in Population") +
+       y = "Genotype Frequency") +
   theme_minimal()
 
 # display the plot
-genotype_count_plot
+genotype_frequency_plot
 
 # Save the plot as a png file
-ggsave(file = "Genotype counts plot.png", plot = genotype_count_plot)
-
+ggsave(file = "Genotype Frequency Plot.png", plot = genotype_frequency_plot)
 
 
 
@@ -178,14 +193,12 @@ p <- ggplot(data, aes(x = NumAlleles)) +
        x = "Allele Count (n)",
        y = "Frequency")
 
-# Save the plot to a PDF file
+# Save the plot to a png file
 png_file_path <- "TotalAlleleCopiesHistogram_ggplot.png"
 ggsave(png_file_path, p)
 
 # Display the plot
 print(p)
-
-
 
 
 
@@ -211,8 +224,6 @@ loss_count_df <- data.frame(Generations = as.numeric(names(loss_count)), Count =
 
 
 
-
-
 # Create a bar plot for fixation events
 fixation_bar_plot <- ggplot(fixation_count_df, aes(x = Generations, y = Count)) +
   geom_bar(stat = "identity", fill = "skyblue") +
@@ -227,7 +238,6 @@ fixation_bar_plot <- ggplot(fixation_count_df, aes(x = Generations, y = Count)) 
 
 # Display the plot
 #print(fixation_bar_plot)
-
 
 
 
@@ -247,9 +257,6 @@ loss_bar_plot <- ggplot(loss_count_df, aes(x = Generations, y = Count)) +
 #print(loss_bar_plot)
 
 
-
-
-
 # make Fixation and loss bar plots that conbain fix and loss plot
 fix_loss_bar_polt <- ggarrange(fixation_bar_plot, loss_bar_plot,
                                ncol = 2, nrow = 1)
@@ -257,8 +264,6 @@ fix_loss_bar_polt <- ggarrange(fixation_bar_plot, loss_bar_plot,
 print(fix_loss_bar_polt)
 # Save the plot as a png file
 ggsave(file = "Fixation and loss bar plots.png", plot = fix_loss_bar_polt)
-
-
 
 
 
@@ -284,7 +289,6 @@ print(max_allele_plot)
 
 
 
-
 # Create a combined plot with density on top and heatmap at the bottom
 combined_plot <- ggplot(data, aes(x = Generations, y = NumAlleles)) +
   geom_tile(aes(fill = NumAlleles), alpha = 0.7) +  # Heatmap at the bottom
@@ -304,9 +308,6 @@ print(combined_plot)
 
 
 
-
-
-
 # make a merged dataframe that conatin the generation allele numbe, allele frquency, fixed count and loss count
 
 merged_df <- subset(average_data, select = c(Generations, Average_Num_Alleles, Average_Allele_Frequency))
@@ -318,7 +319,6 @@ merged_df <- merged_df %>%
   select(-Count.x, -Count.y)
 
 merged_df$Fix_loss_ratio = merged_df$FixedNumber/merged_df$LossedNumber
-
 
 
 
@@ -334,3 +334,113 @@ lineplot_flratio
 # Save the plot as a png file
 ggsave(file = "Alelle fixed and lossed ratio Plot.png", plot = lineplot_flratio)
 
+
+
+# Make the cumulative line plot animation
+
+# Calculate the frequency of AA, Aa, and aa in all generations
+df_genotype_num <- subset(average_data, select = c(Generations,PopulationSize, Average_Allele_Frequency)) 
+df_genotype_num$AA <- (df_genotype_num$Average_Allele_Frequency)**2 * df_genotype_num$PopulationSize
+df_genotype_num$Aa <- 2*df_genotype_num$Average_Allele_Frequency * (1 - df_genotype_num$Average_Allele_Frequency) * df_genotype_num$PopulationSize
+df_genotype_num$aa <- (1 - df_genotype_num$Average_Allele_Frequency)**2 * df_genotype_num$PopulationSize
+
+df_animation <- df_genotype_num %>%
+  # Reshape the data to long format
+  pivot_longer(cols = c(AA, Aa, aa), names_to = "Genotype", values_to = "Allele_Numbers") %>%
+  # Select only the relevant columns
+  select(Generations, Allele_Numbers, Genotype)
+
+fig_genotype <- df_animation %>% accumulate_by(~Generations)
+
+
+fig_genotype <- fig_genotype %>%
+  plot_ly(
+    x = ~Generations, 
+    y = ~Allele_Numbers,
+    split = ~Genotype,
+    frame = ~frame, 
+    type = 'scatter',
+    mode = 'lines', 
+    line = list(simplyfy = F)
+  )
+fig_genotype <- fig_genotype %>% layout(
+  xaxis = list(
+    title = "Generations",
+    zeroline = F
+  ),
+  yaxis = list(
+    title = "Average number of each genotype",
+    zeroline = F
+  )
+) 
+fig_genotype <- fig_genotype %>% animation_opts(
+  frame = 100, 
+  transition = 0, 
+  redraw = FALSE
+)
+fig_genotype <- fig_genotype %>% animation_slider(
+  hide = T
+)
+fig_genotype <- fig_genotype %>% animation_button(
+  x = 1, xanchor = "right", y = 0, yanchor = "bottom"
+)
+
+fig_genotype
+
+# Save the plot as an HTML file
+htmlwidgets::saveWidget(fig_genotype, file = "fig_genotype.html")
+
+
+# Allele A frequency in 5 runs
+
+# Create a new data frame with the first five runs
+data_five_runs <- data %>% slice(1:(5*generation_numbers))
+
+data_five_runs <- subset(data_five_runs,select = c(Generations,AlleleFrequency))
+
+# Add a new column "Runs" based on row index
+data_five_runs <- data_five_runs %>%
+  mutate(Runs = rep(1:(n() %/% generation_numbers), each = generation_numbers, length.out = n()))
+
+
+fig_5runs <- data_five_runs %>% accumulate_by(~Generations)
+
+fig_5runs <- fig_5runs %>%
+  plot_ly(
+    x = ~Generations, 
+    y = ~AlleleFrequency,
+    split = ~Runs,
+    frame = ~frame, 
+    type = 'scatter',
+    mode = 'lines', 
+    line = list(simplyfy = F)
+  )
+fig_5runs <- fig_5runs %>% layout(
+  xaxis = list(
+    title = "Generations",
+    zeroline = F
+  ),
+  yaxis = list(
+    title = "Allele Frequency of A",
+    zeroline = F
+  ),
+  legend = list(
+    title = "Runs"  # Set the legend title for the entire legend box
+  )
+) 
+fig_5runs <- fig_5runs %>% animation_opts(
+  frame = 100, 
+  transition = 0, 
+  redraw = FALSE
+)
+fig_5runs <- fig_5runs %>% animation_slider(
+  hide = T
+)
+fig_5runs <- fig_5runs %>% animation_button(
+  x = 1, xanchor = "right", y = 0, yanchor = "bottom"
+)
+
+fig_5runs
+
+# Save the plot as an HTML file
+htmlwidgets::saveWidget(fig_5runs, file = "fig_5runs.html")

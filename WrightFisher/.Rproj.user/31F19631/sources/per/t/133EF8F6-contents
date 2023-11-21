@@ -27,6 +27,7 @@ library(ggpubr)
 library(dplyr)
 library(viridis)
 
+# Run simulation with go
 # Get the current working directory
 current_dir <- getwd()
 

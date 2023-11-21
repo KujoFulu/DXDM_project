@@ -18,11 +18,11 @@ type Population struct {
 func main() {
 
 	// Set parameters for simulation
-	popSize := 32    // Set population size
-	selCo := 0.01    // Set select coefficient
-	freqStart := 0.5 // Set the start allele frequency
-	numGen := 19     // Set the number of generations
-	numRuns := 107   // Set the number of simulation runs
+	popSize := 150   // Set population size
+	selCo := 0.0015  // Set select coefficient
+	freqStart := 0.6 // Set the start allele frequency
+	numGen := 200    // Set the number of generations
+	numRuns := 200   // Set the number of simulation runs
 
 	fmt.Println("Population size =", popSize)
 	fmt.Println("Select coefficient =", selCo)
