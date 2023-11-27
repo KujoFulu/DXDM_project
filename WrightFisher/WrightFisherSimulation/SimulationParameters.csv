@@ -1,0 +1,2 @@
+PopulationSize,SelectionCoefficient,StartAlleleFrequency,NumGenerations,NumberRuns
+100,0.001,0.001,100,100

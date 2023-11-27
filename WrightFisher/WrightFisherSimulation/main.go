@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -16,14 +18,61 @@ type Population struct {
 }
 
 func main() {
+	// Initialize variables
+	var popSize int
+	var selCo float64
+	var freqStart float64
+	var numGen int
+	var numRuns int
 
-	// Set parameters for simulation
-	popSize := 150   // Set population size
-	selCo := 0.0015  // Set select coefficient
-	freqStart := 0.6 // Set the start allele frequency
-	numGen := 200    // Set the number of generations
-	numRuns := 200   // Set the number of simulation runs
+	//the first parameter is population size
+	popSize, err1 := strconv.Atoi(os.Args[1])
+	if err1 != nil {
+		//problem in converting this parameter
+		panic(err1)
+	}
 
+	if popSize < 0 {
+		panic("Error: negative number given as number of popSize.")
+	}
+
+	//the second parameter is Selection coefficient
+	selCo, err2 := strconv.ParseFloat(os.Args[2], 64)
+	if err2 != nil {
+		//problem in converting this parameter
+		panic(err2)
+	}
+
+	//the third parameter is Starting allele frequency
+	freqStart, err3 := strconv.ParseFloat(os.Args[2], 64)
+	if err3 != nil {
+		//problem in converting this parameter
+		panic(err3)
+	}
+
+	//the fourth parameter is number of generations
+	numGen, err4 := strconv.Atoi(os.Args[1])
+	if err4 != nil {
+		//problem in converting this parameter
+		panic(err4)
+	}
+
+	if numGen < 0 {
+		panic("Error: negative number given as number of numGen.")
+	}
+
+	//the fifth parameter is number of runs
+	numRuns, err5 := strconv.Atoi(os.Args[1])
+	if err1 != nil {
+		//problem in converting this parameter
+		panic(err5)
+	}
+
+	if numRuns < 0 {
+		panic("Error: negative number given as number of numRuns.")
+	}
+
+	// Print loaded parameters
 	fmt.Println("Population size =", popSize)
 	fmt.Println("Select coefficient =", selCo)
 	fmt.Println("Start allele frequency =", freqStart)
@@ -31,11 +80,11 @@ func main() {
 	fmt.Println("Number of simulation runs =", numRuns)
 	fmt.Println("All parameters loaded!")
 
-	// Specify the folder name(for R plotting)
-	//folderName := "WrightFisher"
+	// Specify the folder name (for R plotting)
+	// folderName := "WrightFisher"
 	filename := "SimulationParameters.csv"
 
-	// Write parameters to csv file
+	// Write parameters to CSV file
 	WriteParameters(popSize, selCo, freqStart, numGen, numRuns, filename)
 	fmt.Println("SimulationParameters.csv file created")
 
@@ -55,5 +104,4 @@ func main() {
 	// Write all data to a single CSV file
 	WriteToCSV(allData, "all_simulation_data.csv")
 	fmt.Println("Data output successfully!")
-
 }
