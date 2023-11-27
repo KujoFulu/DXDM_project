@@ -37,7 +37,7 @@ func DrawEcoBoards(timePoints []*Ecosystem, canvasWidth int, frequency int) []im
 // object's bodies on a square canvas that is canvasWidth pixels x canvasWidth pixels
 func DrawToCanvas(timePoint *Ecosystem, canvasWidth int, xPos, yPos []int) image.Image {
 	// define a scaler for the radius of each species
-	rScaler := 10.0
+	rScaler := 20.0
 
 	// set a new square canvas
 	c := canvas.CreateNewCanvas(canvasWidth, canvasWidth)
@@ -54,8 +54,17 @@ func DrawToCanvas(timePoint *Ecosystem, canvasWidth int, xPos, yPos []int) image
 		centerX := float64(xPos[s.index])
 		centerY := float64(yPos[s.index])
 		r := s.population * rScaler
+
+		// set r limit in order not to exceed the canvas
+		if r > float64(canvasWidth/6) {
+			r = float64(canvasWidth / 6)
+		} else if r < 3.0 {
+			r = 3.0
+		}
+
 		// draw the circle
 		c.Circle(centerX, centerY, r)
+
 		// fill the color
 		c.Fill()
 	}
