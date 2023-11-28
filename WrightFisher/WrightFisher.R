@@ -35,6 +35,11 @@ if(!require(htmlwidgets,quietly = TRUE)){
   install.packages("htmlwidgets")
 }
 
+# Check if shiny is installed, and install it if not
+if(!require(shiny,quietly = TRUE)){
+  install.packages("shiny")
+}
+
 # Load required libraries
 library(ggplot2)
 library(ggpubr)
@@ -43,6 +48,7 @@ library(viridis)
 library(plotly)
 library(tidyverse)
 library(htmlwidgets)
+library(shiny)
 
 
 # Run simulation with go
@@ -50,7 +56,7 @@ library(htmlwidgets)
 current_dir <- getwd()
 
 # Construct the absolute path to the Go program
-go_program_path <- file.path(current_dir, "WrightFisherSimulation")
+go_program_path <- file.path(current_dir, "WrightFisher")
 
 # Run the Go program from R
 system(paste("go run", shQuote(go_program_path)), intern = TRUE)
@@ -444,3 +450,6 @@ fig_5runs
 
 # Save the plot as an HTML file
 htmlwidgets::saveWidget(fig_5runs, file = "fig_5runs.html")
+
+
+

@@ -44,14 +44,14 @@ func main() {
 	}
 
 	//the third parameter is Starting allele frequency
-	freqStart, err3 := strconv.ParseFloat(os.Args[2], 64)
+	freqStart, err3 := strconv.ParseFloat(os.Args[3], 64)
 	if err3 != nil {
 		//problem in converting this parameter
 		panic(err3)
 	}
 
 	//the fourth parameter is number of generations
-	numGen, err4 := strconv.Atoi(os.Args[1])
+	numGen, err4 := strconv.Atoi(os.Args[4])
 	if err4 != nil {
 		//problem in converting this parameter
 		panic(err4)
@@ -62,7 +62,7 @@ func main() {
 	}
 
 	//the fifth parameter is number of runs
-	numRuns, err5 := strconv.Atoi(os.Args[1])
+	numRuns, err5 := strconv.Atoi(os.Args[5])
 	if err1 != nil {
 		//problem in converting this parameter
 		panic(err5)
