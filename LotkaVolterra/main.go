@@ -12,7 +12,8 @@ func main() {
 
 	fmt.Println("Reading input parameters...")
 
-	// Main function's own input for original testing
+	// Main function's own input for original testing:
+
 	// // initialize number of species, interaction matrix, and deathGrowth matrix
 	// numSpecies := 3
 
@@ -47,10 +48,8 @@ func main() {
 	// // method 2: set a matrix by hand
 	// // 1. original paper parameters
 	// rateSlice := []float64{0.25, -0.5, -0.5}
-
 	// // // 2. stable equilibrium & limit cycle & extinction
 	// // rateSlice := []float64{3, 4, 7.2}
-
 	// // // 3. chaotic dynamics - 4 species
 	// // rateSlice := []float64{1, 0.72, 1.53, 1.27}
 
@@ -93,7 +92,7 @@ func main() {
 	// take in deathGrowth matrix CLA
 	rateSlice := make([]float64, numSpecies)
 	for i := 0; i < numSpecies; i++ {
-		rateSlice[i], err1 = strconv.ParseFloat(os.Args[2+numSpecies*numSpecies+i], 64)
+		rateSlice[i], err1 = strconv.ParseFloat(os.Args[5+numSpecies*numSpecies+i], 64)
 		if err1 != nil {
 			panic(err1)
 		}
