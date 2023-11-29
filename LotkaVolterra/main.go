@@ -14,14 +14,14 @@ func main() {
 	numSpecies := 3
 
 	// population matrix
-	// // 1. orginal paper
-	// pop := []float64{50.0, 10.0, 5.0}
+	// 1. orginal paper
+	pop := []float64{50.0, 10.0, 5.0}
 
 	// // 2. stable equilibrium & limit cycle & extinction
 	// pop := []float64{0.1, 0.8, 0.3}
 
-	// 3. chaotic dynamics - 4 species
-	pop := []float64{0.1, 0.8, 0.3, 0.5}
+	// // 3. chaotic dynamics - 4 species
+	// pop := []float64{0.1, 0.8, 0.3, 0.5}
 
 	// // method 1: randomly generate
 	// interaction := InitializeInteractionMatrix(numSpecies)
@@ -91,9 +91,9 @@ func main() {
 
 	fmt.Println("GIF drawn!")
 
-	// // writing data to csv file
-	// fmt.Println("Writing data to csv file...")
-	// WriteToCSV(timePoints, "output/original_paper.csv")
-	// fmt.Println("Data written to csv file!")
+	// writing data to csv file
+	fmt.Println("Writing data to csv file...")
+	WriteToCSV(timePoints, "output/original_paper.csv")
+	fmt.Println("Data written to csv file!")
 
 }
