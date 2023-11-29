@@ -128,13 +128,13 @@ func main() {
 
 	fmt.Println("Generating an animated GIF.")
 
-	gifhelper.ImagesToGIF(images, "output/test_original_paper")
+	gifhelper.ImagesToGIF(images, "output/test")
 
 	fmt.Println("GIF drawn!")
 
 	// writing data to csv file
 	fmt.Println("Writing data to csv file...")
-	WriteToCSV(timePoints, "output/test_original_paper.csv")
+	WriteToCSV(timePoints, "output/test.csv")
 	fmt.Println("Data written to csv file!")
 
 }
