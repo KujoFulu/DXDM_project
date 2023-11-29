@@ -92,7 +92,7 @@ func main() {
 	// take in deathGrowth matrix CLA
 	rateSlice := make([]float64, numSpecies)
 	for i := 0; i < numSpecies; i++ {
-		rateSlice[i], err1 = strconv.ParseFloat(os.Args[5+numSpecies*numSpecies+i], 64)
+		rateSlice[i], err1 = strconv.ParseFloat(os.Args[2+numSpecies*numSpecies+i+numSpecies], 64)
 		if err1 != nil {
 			panic(err1)
 		}
