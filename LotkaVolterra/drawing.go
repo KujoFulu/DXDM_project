@@ -2,6 +2,7 @@ package main
 
 import (
 	"canvas"
+	"fmt"
 	"image"
 	"math/rand"
 	"time"
@@ -27,6 +28,8 @@ func DrawEcoBoards(timePoints []*Ecosystem, canvasWidth int, frequency int) []im
 		yPos[i] = GenPosition(canvasWidth)
 		color[i] = GenRandColor()
 	}
+
+	fmt.Println("The coloe slice is: ", color)
 
 	// range over all time points and draw them
 	for i := range timePoints {
