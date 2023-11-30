@@ -18,16 +18,20 @@ func DrawEcoBoards(timePoints []*Ecosystem, canvasWidth int, frequency int) []im
 	xPos := make([]int, numSpecies)
 	yPos := make([]int, numSpecies)
 
+	// create a color slice
+	color := make([][]uint8, numSpecies)
+
 	// range over all species and assign them a position, store in slice
 	for i := 0; i < numSpecies; i++ {
 		xPos[i] = GenPosition(canvasWidth)
 		yPos[i] = GenPosition(canvasWidth)
+		color[i] = GenRandColor()
 	}
 
 	// range over all time points and draw them
 	for i := range timePoints {
 		if i%frequency == 0 {
-			imageList = append(imageList, DrawToCanvas(timePoints[i], canvasWidth, xPos, yPos))
+			imageList = append(imageList, DrawToCanvas(timePoints[i], canvasWidth, xPos, yPos, color))
 		}
 	}
 	return imageList
@@ -35,7 +39,7 @@ func DrawEcoBoards(timePoints []*Ecosystem, canvasWidth int, frequency int) []im
 
 // DrawToCanvas generates the image corresponding to a canvas after drawing a Universe
 // object's bodies on a square canvas that is canvasWidth pixels x canvasWidth pixels
-func DrawToCanvas(timePoint *Ecosystem, canvasWidth int, xPos, yPos []int) image.Image {
+func DrawToCanvas(timePoint *Ecosystem, canvasWidth int, xPos, yPos []int, color [][]uint8) image.Image {
 	// define a scaler for the radius of each species
 	rScaler := 20.0
 
@@ -49,8 +53,13 @@ func DrawToCanvas(timePoint *Ecosystem, canvasWidth int, xPos, yPos []int) image
 
 	// range over species, set each of them a position and a color, draw them as circles on the cancavs
 	for _, s := range timePoint.species {
+		// asign color
+		red := color[s.index][0]
+		green := color[s.index][1]
+		blue := color[s.index][2]
+
 		// set color, position and radius
-		c.SetFillColor(canvas.MakeColor(255, 192, 203))
+		c.SetFillColor(canvas.MakeColor(uint8(red), uint8(green), uint8(blue)))
 		centerX := float64(xPos[s.index])
 		centerY := float64(yPos[s.index])
 		r := s.population * rScaler
@@ -88,4 +97,25 @@ func GenPosition(canvasWidth int) int {
 	position := aRange + rand.Intn(delta)
 
 	return position
+}
+
+// function GenRandColor() generates a random color RGB value
+func GenRandColor() []uint8 {
+	// Seed the random number generator
+	rand.Seed(time.Now().UnixNano())
+
+	// generate a random color
+	red := rand.Intn(255)
+	green := rand.Intn(255)
+	blue := rand.Intn(255)
+
+	// creat a color slice
+	color := make([]uint8, 3)
+
+	// add generated color to the slice
+	color[0] = uint8(red)
+	color[1] = uint8(green)
+	color[2] = uint8(blue)
+
+	return color
 }
