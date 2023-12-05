@@ -255,7 +255,7 @@ shinyServer(function(input, output) {
       labs(title = "Fixation Events Over Time",
            x = "Generations",
            y = "Count of Fixation Events")+
-      ylim(0, max(loss_count_df$Count) * 1.5)
+      ylim(0, max(fixation_count_df$Count) * 1.5)
     
     # Save the plot as a png file
     #ggsave(file = "Fixation_Count_Bar_Plot.png", plot = fixation_bar_plot)
