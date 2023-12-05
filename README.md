@@ -1,6 +1,7 @@
 # DXDM_project
  02601_final_project
 
+# Wright-Fisher Model
 Wright-Fisher model simulation is a program that uses Go language to simulate and R language for visualization.
 
 Before starting the simulation, PLEASE make sure the GO workplace is all setup, also some required packages must be added to the Go path: gonum.org/v1/gonum/stat/distuv
