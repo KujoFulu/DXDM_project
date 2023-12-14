@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+
 type Population struct {
 	popSize   int     //Population size
 	gen       int     //Gen which generation this is (we might not need this)
@@ -17,13 +18,17 @@ type Population struct {
 	freq      float64 //K This pop’s allele frequency
 }
 
+
 func main() {
+
+	
 	// Initialize variables
 	var popSize int
 	var selCo float64
 	var freqStart float64
 	var numGen int
 	var numRuns int
+
 
 	//the first parameter is population size
 	popSize, err1 := strconv.Atoi(os.Args[1])
@@ -72,6 +77,7 @@ func main() {
 		panic("Error: negative number given as number of numRuns.")
 	}
 
+
 	// Print loaded parameters
 	fmt.Println("Population size =", popSize)
 	fmt.Println("Select coefficient =", selCo)
@@ -80,13 +86,16 @@ func main() {
 	fmt.Println("Number of simulation runs =", numRuns)
 	fmt.Println("All parameters loaded!")
 
+
 	// Specify the folder name (for R plotting)
 	// folderName := "WrightFisher"
 	filename := "SimulationParameters.csv"
 
+
 	// Write parameters to CSV file
 	WriteParameters(popSize, selCo, freqStart, numGen, numRuns, filename)
 	fmt.Println("SimulationParameters.csv file created")
+
 
 	// Run simulations using SimulateMultipleRuns
 	fmt.Println("Start simulation!")
@@ -94,6 +103,7 @@ func main() {
 	runs := SimulateMultipleRuns(numRuns, popSize, numGen, selCo, freqStart)
 	log.Println("Runtime:", time.Since(startTime))
 	fmt.Println("Simulation done, start output data")
+
 
 	// Combine data from all runs into a single slice
 	var allData []*Population
@@ -104,4 +114,12 @@ func main() {
 	// Write all data to a single CSV file
 	WriteToCSV(allData, "all_simulation_data.csv")
 	fmt.Println("Data output successfully!")
+	
+
+	fmt.Println("Start simulate two loci model ")
+    recomb := 0.1
+    twpLoci := SimulateTwoLoci(popSize, selCo, recomb)
+    WritetwoLToCSV(twpLoci, "two_loci_simulation_data")
+
+
 }

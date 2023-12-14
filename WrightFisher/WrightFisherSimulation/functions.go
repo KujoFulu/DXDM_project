@@ -303,7 +303,7 @@ func SimulateTwoLoci(n int, selCo, recomb float64) []*TwoLPop {
 	i := 0
 
 		//While the population is not fixed or less than 100
-		for fixed == false || i < 100 {
+		for fixed == false && i < 100 {
 
 			//increase the generation
 			i++
@@ -368,6 +368,9 @@ func InitializeTwoLoci(n int, selCo, recomb float64) *TwoLPop {
 
 	var pop TwoLPop
 
+	//set the population size
+	pop.n = n
+
 	//copy over the selection coefficient
 	pop.selCo = selCo
 	
@@ -379,7 +382,10 @@ func InitializeTwoLoci(n int, selCo, recomb float64) *TwoLPop {
 
 	//Randomly choose a singleton
 	s := rand.Intn(4)
-	pop.singleton = rand.Intn(4)
+	pop.singleton = s
+
+	
+	pop.haplotypeQuant = make([]int, 4)
 
 	if s == 0 {
 
@@ -415,6 +421,9 @@ func InitializeTwoLoci(n int, selCo, recomb float64) *TwoLPop {
 
 	}
 
+
+	pop.selProbs = make([]float64, 4)
+
 	//The selection probabilities are calculated from the quanties of the genotypes and if it contains the mutant at the b locus
 	//if it contains the mutant the 
 	selectionProbs := SelectionProbabilities(&pop)
@@ -432,21 +441,20 @@ func InitializeTwoLoci(n int, selCo, recomb float64) *TwoLPop {
 
 
 //AlleleDistribution is a function that take in a population number
-//It returns a quantity of an allele taken from the distribution of frequencies after running the WF 100 times
+//It returns a quantity of an allele taken from the distribution of frequencies after running the WF 
 func AlleleDistribution(n int) int {
 
-	//Run the Wright Fisher simulation for a single site 100 times
+	//Run the Wright Fisher simulation for a single site 
 	//This will have the same population size as the two loci, run for 100 generations, have a selection coefficient of 0 and a starting frequency of 0.5
-	simulation := SimulateMultipleRuns(100, n, 100, 0.0, 0.5)
-
-	//Randonly choose a run to pull from
-	randRun := rand.Intn(1000)
+	iniPop := InitializePopulation(n, 0.0, 0.5)
+		
+	timePoints := SimulatePopulationTimePoints(iniPop, 100)
 
 	//Randomly choose a generation to pull from
 	randGen := rand.Intn(100)
 
 	//Pull quantity of that allele
-	freqNum := int(simulation[randRun][randGen].freqNum)
+	freqNum := int(timePoints[randGen].freqNum)
 	return freqNum
 }
 
@@ -460,10 +468,11 @@ func CreateEmptyLociPop(oldGen *TwoLPop) *TwoLPop {
 
 	newGen.n = oldGen.n
 
-	hapQuant := make([]int, 4)
-	newGen.haplotypeQuant = hapQuant
+	newGen.haplotypeQuant = make([]int, 4)
 
 	newGen.selCo = oldGen.selCo 
+
+	newGen.selProbs = make([]float64, 4)
 
 	s := SelectionProbabilities(oldGen)
 	newGen.selProbs[0] = s[0]
@@ -497,21 +506,22 @@ func SelectionProbabilities(oldGen *TwoLPop) []float64 {
 	if oldGen.singleton == 0 || oldGen.singleton == 1 {
 		
 		//All of the haplotypes with B have the selection coefficient added to them
-		freqAB += oldGen.selCo
-		freqaB += oldGen.selCo
+		freqAB = freqAB*(1.0+oldGen.selCo)
+		freqaB = freqaB*(1.0+oldGen.selCo)
 		//All of the haplotypes with b have the selection coefficient reduced from them
-		freqAb -= oldGen.selCo
-		freqab -= oldGen.selCo
+		freqAb = freqAb*(1.0-oldGen.selCo)
+		freqab = freqab*(1.0-oldGen.selCo)
 
 	} else {
 		//if the singleton muation is b
 
 		//All of the haplotypes with B have the selection coefficient reduced from them
-		freqAB -= oldGen.selCo
-		freqaB -= oldGen.selCo
+		freqAB = freqAB*(1.0-oldGen.selCo)
+		freqaB = freqaB*(1.0-oldGen.selCo)
 		//All of the haplotypes with b have the selection coefficient added to them
-		freqAb += oldGen.selCo
-		freqab += oldGen.selCo
+		freqAb = freqAb*(1.0+oldGen.selCo)
+		freqab = freqab*(1.0+oldGen.selCo)
+
 	}
 
 	//normalize the frequencies after adjusting with the selection coefficient
@@ -739,7 +749,7 @@ func WritetwoLToCSV(timePoints []*TwoLPop, filename string) {
 			fmt.Sprint(pop.selCo),
 			fmt.Sprint(pop.recomb),
 			fmt.Sprint(pop.haplotypeQuant[pop.singleton]),
-			fmt.Sprint(pop.haplotypeQuant[pop.singleton]/pop.n),
+			fmt.Sprint(float64(pop.haplotypeQuant[pop.singleton])/float64(pop.n)),
 		}
 		writer.Write(row)
 	}
