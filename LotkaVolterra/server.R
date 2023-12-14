@@ -29,7 +29,7 @@ server <- function(input, output, session) {
         input[[paste("rate", i, sep = "")]])
     
     # Set the working directory to the location of the Go program
-    setwd("/Users/graceya/go/src/LotkaVolterra")
+    setwd("/Users/kujofulu/go/src/DXDM_project/LotkaVolterra")
     current_dir <- getwd()
     go_program_path <-
       file.path(current_dir, "LVSimulation")
