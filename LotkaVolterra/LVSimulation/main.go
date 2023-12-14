@@ -76,7 +76,7 @@ func main() {
 			panic(err1)
 		}
 		if pop[i] <= 0 {
-			panic("Error: nonpositive number given as pile of coins.")
+			panic("Error: nonpositive number given as population.")
 		}
 	}
 
@@ -98,8 +98,12 @@ func main() {
 		}
 	}
 
+	// print out all CLAs in one line
+	fmt.Println("numSpecies:", numSpecies, "pop:", pop, "interactionSlice:", interactionSlice, "rateSlice:", rateSlice)
+
 	// set interaction and deathGrowth matrix: for simulation
-	interaction := SetInteractionMatrix(interactionSlice, numSpecies)
+	transposedSlice := transposeSquareMatrix(numSpecies, interactionSlice)
+	interaction := SetInteractionMatrix(transposedSlice, numSpecies)
 	deathGrowth := SetRateMatrix(rateSlice)
 
 	// initialize number of generations and time interval: for simulation
@@ -128,13 +132,13 @@ func main() {
 
 	fmt.Println("Generating an animated GIF.")
 
-	gifhelper.ImagesToGIF(images, "output/test")
+	gifhelper.ImagesToGIF(images, "LVSimulation/output/test")
 
 	fmt.Println("GIF drawn!")
 
 	// writing data to csv file
 	fmt.Println("Writing data to csv file...")
-	WriteToCSV(timePoints, "output/test.csv")
+	WriteToCSV(timePoints, "LVSimulation/output/test.csv")
 	fmt.Println("Data written to csv file!")
 
 }

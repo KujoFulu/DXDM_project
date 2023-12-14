@@ -144,6 +144,17 @@ func InitializeInteractionMatrix(numSpecies int) mat.Matrix {
 	return interactionMatrix
 }
 
+// TransposeSquareMatrix() takes a square matrix in slice format and its dimension, and returns the transposed matrix.
+func transposeSquareMatrix(size int, original []float64) []float64 {
+	transposed := make([]float64, len(original))
+	for i := 0; i < size; i++ {
+		for j := 0; j < size; j++ {
+			transposed[j*size+i] = original[i*size+j]
+		}
+	}
+	return transposed
+}
+
 // SetInteractionMatrix(interactionSlice is a different version of generating interaction matrix, with a slice of float64 numbers we set.
 func SetInteractionMatrix(interactionSlice []float64, numSpecies int) mat.Matrix {
 	// convert the slice into a n*1 death and growth matrix
