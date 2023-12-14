@@ -55,6 +55,7 @@ library(tidyverse)
 library(htmlwidgets)
 library(shiny)
 library(shinyjs)
+library(mathjaxr)
 
 # function for animation
 # https://plotly.com/r/cumulative-animations/
