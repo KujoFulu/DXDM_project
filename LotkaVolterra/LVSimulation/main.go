@@ -26,6 +26,7 @@ func main() {
 	// // pop := []float64{0.1, 0.8, 0.3, 0.5}
 
 	// // interaction matrix
+	// // *** important: need to adjust by column
 	// // // method 1: randomly generate
 	// // interaction := InitializeInteractionMatrix(numSpecies)
 	// // method 2: set a matrix by hand
