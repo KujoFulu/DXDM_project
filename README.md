@@ -1,6 +1,6 @@
 # DXDM_project
- 02601_final_project Group 2
- Link to code demo video: https://youtu.be/jD37cH1pPW8
+02601_final_project Group 2
+Link to code demo video: https://youtu.be/jD37cH1pPW8
 
 # Lotka-Volterra Model
 The Lotka-Volterra model is a program that uses Go language to simulate, and Python, R for visulization.
