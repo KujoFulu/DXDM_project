@@ -21,7 +21,7 @@ Open Rstudio and file "server.R" library all packages first, and type the code "
  **** The WrightFisher.R is the raw code; you can get a specific plot with specific parameters using that file. You also can use the Go to simulation and output to a CSV file. The code to start is "./WrightFisherSimulation populationSize selectCoefficent startFrequency generationNumber runTimes". For example "./WrightFisherSimulation 200 0 0.5 100 100" ****
 
 # Lotka-Volterra Model
-The Lotka-Volterra model is a program uses Go language to simulate, Python and R for visulization.
+The Lotka-Volterra model is a program that uses Go language to simulate, and Python, R for visulization.
 
 Before starting the simulation, PLEASE make sure the GO workplace is all set, also some required packages must be added to the Go path: gonum.org/v1/gonum/mat
 To install this package, you can use this code:
